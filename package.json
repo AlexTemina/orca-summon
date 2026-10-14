@@ -1,0 +1,62 @@
+{
+  "$schema": "https://www.raycast.com/schemas/extension.json",
+  "name": "orca-summon",
+  "title": "Orca Summon",
+  "description": "Summon Claude Code into any Orca worktree, in the permission mode you pick",
+  "icon": "icon.png",
+  "author": "alejandro_ruiz_temina",
+  "platforms": [
+    "macOS"
+  ],
+  "categories": [
+    "Developer Tools"
+  ],
+  "license": "MIT",
+  "commands": [
+    {
+      "name": "summon-claude",
+      "title": "Summon Claude",
+      "description": "Pick a worktree and a mode, write the question, and open Claude Code in a new Orca tab",
+      "mode": "view",
+      "keywords": [
+        "claude code",
+        "orca"
+      ]
+    },
+    {
+      "name": "quick-summon",
+      "title": "Quick Summon",
+      "description": "Summon Claude straight away, with the worktree and mode last used in Summon Claude",
+      "mode": "no-view",
+      "keywords": [
+        "orsu"
+      ],
+      "arguments": [
+        {
+          "name": "prompt",
+          "type": "text",
+          "placeholder": "Question",
+          "required": true
+        }
+      ]
+    }
+  ],
+  "dependencies": {
+    "@raycast/api": "^1.104.20"
+  },
+  "devDependencies": {
+    "@types/node": "22.19.17",
+    "@types/react": "19.0.10",
+    "typescript": "^5.9.3",
+    "@raycast/eslint-config": "^2.2.0",
+    "eslint": "^9.39.0",
+    "prettier": "^3.8.5"
+  },
+  "scripts": {
+    "build": "ray build",
+    "dev": "ray develop",
+    "lint": "ray lint",
+    "fix-lint": "ray lint --fix",
+    "publish": "npx @raycast/api@latest publish"
+  }
+}
