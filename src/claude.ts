@@ -1,12 +1,13 @@
 import { LocalStorage } from "@raycast/api";
 import { execFile } from "node:child_process";
 import { mkdtempSync, writeFileSync } from "node:fs";
-import { tmpdir } from "node:os";
+import { homedir, tmpdir } from "node:os";
 import { join } from "node:path";
 import { promisify } from "node:util";
 
 const ORCA = "/Applications/Orca.app/Contents/Resources/bin/orca";
-const run = promisify(execFile);
+const exec = promisify(execFile);
+const run = (file: string, args: string[]) => exec(file, args, { cwd: homedir() });
 
 export const MODES = [
   { value: "auto", title: "Auto" },
