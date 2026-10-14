@@ -5,7 +5,7 @@ Summon [Claude Code](https://claude.com/claude-code) into any [Orca](https://ono
 ## Commands
 
 - **Summon Claude**: a form with a multi-line question, a worktree picker (every live Orca worktree, grouped by repo) and a permission mode picker. It remembers your last worktree and mode.
-- **Quick Summon**: type `orsu`, then the question, then Enter. It reuses the worktree and mode you last picked in Summon Claude.
+- **Quick Summon**: type `qsu`, TAB, then the question, then Enter. It reuses the worktree and mode you last picked in Summon Claude.
 
 Both open Claude Code in a new Orca tab of that worktree, focus it, and reset Raycast to the root search.
 
