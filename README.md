@@ -23,10 +23,12 @@ Both open Claude Code in a new Orca tab of that worktree, focus it, and reset Ra
 ```sh
 git clone https://github.com/AlexTemina/orca-summon.git
 cd orca-summon
-npm install && npm run build
+npm install && npm run dev
 ```
 
-`npm run build` installs the extension into Raycast. Pull and build again to update.
+Wait for `ready - built extension successfully`, then stop it with `Ctrl+C`. `npm run dev` registers the extension in Raycast, and it stays installed after you stop it. `npm run build` alone only compiles: it does not add the extension to Raycast.
+
+To update: `git pull && npm run dev`, then `Ctrl+C`.
 
 ## Tip
 
