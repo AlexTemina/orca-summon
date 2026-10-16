@@ -26,7 +26,7 @@ export type Worktree = {
   linkedLinearIssue: string | null;
 };
 
-export type Terminal = { handle: string; worktreeId: string; connected: boolean; title: string };
+export type Terminal = { handle: string; worktreeId: string; connected: boolean; title: string | null };
 
 export type Choice = { worktree: string; mode: string };
 
@@ -78,7 +78,7 @@ export async function summon(
   const worktree = findIssueWorktree(worktrees, id);
   if (worktree) {
     const terminals = (await listTerminals()).filter((t) => t.worktreeId === worktree.id && t.connected);
-    const agent = terminals.find((t) => t.title.startsWith("✳")) ?? terminals[0];
+    const agent = terminals.find((t) => (t.title ?? "").startsWith("✳")) ?? terminals[0];
     if (agent) {
       await switchTo(agent.handle);
       if (prompt.trim()) await send(agent.handle, prompt);
