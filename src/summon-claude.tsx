@@ -1,9 +1,9 @@
 import { Action, ActionPanel, closeMainWindow, Form, PopToRootType, showToast, Toast } from "@raycast/api";
 import { basename } from "node:path";
 import { useEffect, useState } from "react";
-import { Choice, lastChoice, launch, listWorktrees, MODES, saveChoice, Worktree } from "./claude";
+import { Choice, lastChoice, listWorktrees, MODES, saveChoice, summon, Worktree } from "./claude";
 
-type Values = Choice & { prompt: string };
+type Values = Choice & { prompt: string; issue: string };
 
 function groupByRepo(worktrees: Worktree[]) {
   const groups = new Map<string, Worktree[]>();
@@ -30,14 +30,14 @@ export default function Command() {
       });
   }, []);
 
-  async function handleSubmit({ prompt, worktree, mode }: Values) {
-    if (!prompt.trim()) {
-      await showToast({ style: Toast.Style.Failure, title: "Write a question first" });
+  async function handleSubmit({ prompt, issue, worktree, mode }: Values) {
+    if (!prompt.trim() && !issue.trim()) {
+      await showToast({ style: Toast.Style.Failure, title: "Write a question or a Linear issue" });
       return;
     }
     try {
       await saveChoice({ worktree, mode });
-      await launch(prompt, { worktree, mode });
+      await summon({ prompt, issue }, { worktree, mode }, worktrees ?? []);
       await closeMainWindow({ clearRootSearch: true, popToRootType: PopToRootType.Immediate });
     } catch (error) {
       await showToast({ style: Toast.Style.Failure, title: "Could not open Claude in Orca", message: String(error) });
@@ -54,6 +54,12 @@ export default function Command() {
       }
     >
       <Form.TextArea id="prompt" title="Question" placeholder="What do you want to ask?" autoFocus />
+      <Form.TextField
+        id="issue"
+        title="Linear issue"
+        placeholder="ES-12279 (optional)"
+        info="Goes to the issue's worktree: its live agent, a new one there, or the fallback worktree from the preferences. The worktree picker is ignored."
+      />
       {worktrees && choice && (
         <>
           <Form.Dropdown id="worktree" title="Worktree" defaultValue={choice.worktree}>

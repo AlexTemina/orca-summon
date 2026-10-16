@@ -16,7 +16,7 @@
     {
       "name": "summon-claude",
       "title": "Summon Claude",
-      "description": "Pick a worktree and a mode, write the question, and open Claude Code in a new Orca tab",
+      "description": "Pick a worktree and a mode, or a Linear issue, write the question, and open Claude Code in Orca",
       "mode": "view",
       "keywords": [
         "claude code",
@@ -26,7 +26,7 @@
     {
       "name": "quick-summon",
       "title": "Quick Summon",
-      "description": "Summon Claude straight away, with the worktree and mode last used in Summon Claude",
+      "description": "Summon Claude straight away, with the worktree and mode last used. With a Linear issue, it goes to that issue's agent",
       "mode": "no-view",
       "keywords": [
         "orsu"
@@ -36,7 +36,13 @@
           "name": "prompt",
           "type": "text",
           "placeholder": "Question",
-          "required": true
+          "required": false
+        },
+        {
+          "name": "issue",
+          "type": "text",
+          "placeholder": "ES-12279",
+          "required": false
         }
       ]
     }
@@ -58,5 +64,31 @@
     "lint": "ray lint",
     "fix-lint": "ray lint --fix",
     "publish": "npx @raycast/api@latest publish"
-  }
+  },
+  "preferences": [
+    {
+      "name": "fallbackWorktree",
+      "type": "textfield",
+      "required": false,
+      "title": "Fallback worktree",
+      "description": "Absolute path of the Orca worktree where a Linear issue with no worktree of its own gets started",
+      "placeholder": "/Users/you/projects/notes"
+    },
+    {
+      "name": "startPrompt",
+      "type": "textfield",
+      "required": false,
+      "title": "Start prompt",
+      "description": "Prompt for an issue with no worktree, run in the fallback worktree. {issue} is replaced by the issue id",
+      "default": "Start working on {issue}."
+    },
+    {
+      "name": "resumePrompt",
+      "type": "textfield",
+      "required": false,
+      "title": "Resume prompt",
+      "description": "Prompt for a new agent in an issue's worktree when no question is given. {issue} is replaced by the issue id",
+      "default": "Continue with {issue}."
+    }
+  ]
 }
