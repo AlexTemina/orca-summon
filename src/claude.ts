@@ -47,6 +47,55 @@ export async function switchTo(handle: string) {
   await run(ORCA, ["terminal", "switch", "--terminal", handle, "--json"]);
 }
 
+export async function send(handle: string, text: string) {
+  await run(ORCA, ["terminal", "send", "--terminal", handle, "--text", text, "--enter", "--json"]);
+}
+
+function findIssueWorktree(worktrees: Worktree[], issue: string) {
+  const t = issue.trim().toLowerCase();
+  return (
+    worktrees.find((w) => w.linkedLinearIssue?.toLowerCase() === t) ??
+    worktrees.find((w) => w.displayName.toLowerCase().includes(t))
+  );
+}
+
+/**
+ * Summon Claude. With a Linear issue, it goes where that issue lives:
+ * a live agent in the issue's worktree gets the prompt and the focus; a worktree with no agent
+ * gets a new one; no worktree at all, and Claude starts the task from the vault with /start-task.
+ * Without an issue, a new agent in the chosen worktree, as always.
+ */
+export async function summon(
+  { prompt, issue }: { prompt: string; issue?: string },
+  choice: Choice,
+  worktrees: Worktree[],
+): Promise<string> {
+  const id = issue?.trim();
+  if (!id) {
+    await launch(prompt, choice);
+    return "Claude summoned";
+  }
+  const worktree = findIssueWorktree(worktrees, id);
+  if (worktree) {
+    const terminals = (await listTerminals()).filter((t) => t.worktreeId === worktree.id && t.connected);
+    const agent = terminals.find((t) => t.title.startsWith("✳")) ?? terminals[0];
+    if (agent) {
+      await switchTo(agent.handle);
+      if (prompt.trim()) await send(agent.handle, prompt);
+      return `${id}: back to its agent`;
+    }
+    await launch(prompt.trim() || `Sigue con ${id}. Lee el tablero de Orca y Linear antes de tocar nada.`, {
+      worktree: worktree.id,
+      mode: choice.mode,
+    });
+    return `${id}: new agent in ${worktree.displayName}`;
+  }
+  const vault = worktrees.find((w) => w.isMainWorktree && w.path.endsWith("/vault"));
+  if (!vault) throw new Error(`No worktree for ${id}, and the vault main checkout is not in Orca`);
+  await launch(`/start-task ${id}${prompt.trim() ? `\n\n${prompt}` : ""}`, { worktree: vault.id, mode: choice.mode });
+  return `${id}: starting it from the vault`;
+}
+
 export async function lastChoice(worktrees: Worktree[]): Promise<Choice> {
   const saved = await LocalStorage.getItem<string>("worktree");
   const worktree =

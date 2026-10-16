@@ -1,7 +1,7 @@
 # Orca Summon Changelog
 
-## [Jump to Task] - 2026-10-16
+## [Linear issue] - 2026-10-16
 
-- New command `jump`: focus the live agent of a Linear issue's worktree, summon one, or start the task from the vault. Deep-linkable.
+- Summon Claude and Quick Summon take an optional Linear issue: back to its agent, a new agent in its worktree, or `/start-task` from the vault. Deep-linkable from Quick Summon.
 
 ## [Initial Version] - 2026-10-14

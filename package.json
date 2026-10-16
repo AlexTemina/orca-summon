@@ -16,7 +16,7 @@
     {
       "name": "summon-claude",
       "title": "Summon Claude",
-      "description": "Pick a worktree and a mode, write the question, and open Claude Code in a new Orca tab",
+      "description": "Pick a worktree and a mode, or a Linear issue, write the question, and open Claude Code in Orca",
       "mode": "view",
       "keywords": [
         "claude code",
@@ -26,7 +26,7 @@
     {
       "name": "quick-summon",
       "title": "Quick Summon",
-      "description": "Summon Claude straight away, with the worktree and mode last used in Summon Claude",
+      "description": "Summon Claude straight away, with the worktree and mode last used. With a Linear issue, it goes to that issue's agent",
       "mode": "no-view",
       "keywords": [
         "orsu"
@@ -36,31 +36,12 @@
           "name": "prompt",
           "type": "text",
           "placeholder": "Question",
-          "required": true
-        }
-      ]
-    },
-    {
-      "name": "jump",
-      "title": "Jump to Task",
-      "description": "Open the Orca worktree of a Linear issue: focus its live agent, or summon one, or start the task from the vault",
-      "mode": "no-view",
-      "keywords": [
-        "orca",
-        "jump",
-        "linear"
-      ],
-      "arguments": [
-        {
-          "name": "target",
-          "type": "text",
-          "placeholder": "ES-12279",
-          "required": true
+          "required": false
         },
         {
-          "name": "prompt",
+          "name": "issue",
           "type": "text",
-          "placeholder": "Question (optional)",
+          "placeholder": "ES-12279",
           "required": false
         }
       ]

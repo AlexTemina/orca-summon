@@ -5,7 +5,7 @@ Summon [Claude Code](https://claude.com/claude-code) into any [Orca](https://ono
 ## Commands
 
 - **Summon Claude**: a form with a multi-line question, a worktree picker (every live Orca worktree, grouped by repo) and a permission mode picker. It remembers your last worktree and mode.
-- **Jump to Task**: `jump ES-12279`. Finds the Orca worktree linked to that Linear issue (or whose name contains it). A live agent there gets focused; none, and Claude is summoned in it; no worktree at all, and Claude starts the task from the vault main checkout with `/start-task`. Works as a deep link too: `raycast://extensions/alejandro_ruiz_temina/orca-summon/jump?arguments={"target":"ES-12279"}`, which is what the vault's Daily render puts next to every issue.
+- **Linear issue (optional, both commands)**: give an issue id and Claude goes where the issue lives. A live agent in its worktree gets the question and the focus; a worktree with no agent gets a new one; no worktree, and Claude starts the task from the vault with `/start-task`. Deep link: `raycast://extensions/alejandro_ruiz_temina/orca-summon/quick-summon?arguments={"issue":"ES-12279"}`, which is what the vault's Daily render puts next to every issue.
 - **Quick Summon**: type `qsu`, TAB, then the question, then Enter. It reuses the worktree and mode you last picked in Summon Claude.
 
 Both open Claude Code in a new Orca tab of that worktree, focus it, and reset Raycast to the root search.
