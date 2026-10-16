@@ -58,7 +58,7 @@ export default function Command() {
         id="issue"
         title="Linear issue"
         placeholder="ES-12279 (optional)"
-        info="Goes to the issue's worktree: its live agent, a new one there, or /start-task from the vault. The worktree picker is ignored."
+        info="Goes to the issue's worktree: its live agent, a new one there, or the fallback worktree from the preferences. The worktree picker is ignored."
       />
       {worktrees && choice && (
         <>

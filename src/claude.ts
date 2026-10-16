@@ -103,3 +103,24 @@ export async function summon(
   await launch(prompt.trim() ? `${start}\n\n${prompt}` : start, { worktree: target.id, mode: choice.mode });
   return `${id}: starting it in ${target.displayName}`;
 }
+export async function lastChoice(worktrees: Worktree[]): Promise<Choice> {
+  const saved = await LocalStorage.getItem<string>("worktree");
+  const worktree =
+    worktrees.find((w) => w.id === saved)?.id ?? worktrees.find((w) => w.isMainWorktree)?.id ?? worktrees[0]?.id;
+  const mode = (await LocalStorage.getItem<string>("mode")) ?? MODES[0].value;
+  return { worktree, mode };
+}
+
+export async function saveChoice({ worktree, mode }: Choice) {
+  await LocalStorage.setItem("worktree", worktree);
+  await LocalStorage.setItem("mode", mode);
+}
+
+export async function launch(prompt: string, { worktree, mode }: Choice) {
+  const dir = mkdtempSync(join(tmpdir(), "orca-summon-"));
+  const file = join(dir, "prompt.txt");
+  writeFileSync(file, prompt);
+  const command = `claude --permission-mode ${mode} "$(cat '${file}')"; rm -rf '${dir}'`;
+  await run("open", ["-a", "Orca"]);
+  await run(ORCA, ["terminal", "create", "--worktree", `id:${worktree}`, "--command", command, "--focus", "--json"]);
+}
