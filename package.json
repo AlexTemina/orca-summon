@@ -64,5 +64,31 @@
     "lint": "ray lint",
     "fix-lint": "ray lint --fix",
     "publish": "npx @raycast/api@latest publish"
-  }
+  },
+  "preferences": [
+    {
+      "name": "fallbackWorktree",
+      "type": "textfield",
+      "required": false,
+      "title": "Fallback worktree",
+      "description": "Absolute path of the Orca worktree where a Linear issue with no worktree of its own gets started",
+      "placeholder": "/Users/you/projects/notes"
+    },
+    {
+      "name": "startPrompt",
+      "type": "textfield",
+      "required": false,
+      "title": "Start prompt",
+      "description": "Prompt for an issue with no worktree, run in the fallback worktree. {issue} is replaced by the issue id",
+      "default": "Start working on {issue}."
+    },
+    {
+      "name": "resumePrompt",
+      "type": "textfield",
+      "required": false,
+      "title": "Resume prompt",
+      "description": "Prompt for a new agent in an issue's worktree when no question is given. {issue} is replaced by the issue id",
+      "default": "Continue with {issue}."
+    }
+  ]
 }

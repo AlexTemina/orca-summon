@@ -1,4 +1,4 @@
-import { LocalStorage } from "@raycast/api";
+import { getPreferenceValues, LocalStorage } from "@raycast/api";
 import { execFile } from "node:child_process";
 import { mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -59,11 +59,13 @@ function findIssueWorktree(worktrees: Worktree[], issue: string) {
   );
 }
 
+const fill = (template: string, issue: string) => template.split("{issue}").join(issue);
+
 /**
  * Summon Claude. With a Linear issue, it goes where that issue lives:
  * a live agent in the issue's worktree gets the prompt and the focus; a worktree with no agent
- * gets a new one; no worktree at all, and Claude starts the task from the vault with /start-task.
- * Without an issue, a new agent in the chosen worktree, as always.
+ * gets a new one; no worktree at all, and Claude starts the issue in the fallback worktree
+ * set in the preferences. Without an issue, a new agent in the chosen worktree, as always.
  */
 export async function summon(
   { prompt, issue }: { prompt: string; issue?: string },
@@ -75,6 +77,7 @@ export async function summon(
     await launch(prompt, choice);
     return "Claude summoned";
   }
+  const prefs = getPreferenceValues<Preferences>();
   const worktree = findIssueWorktree(worktrees, id);
   if (worktree) {
     const terminals = (await listTerminals()).filter((t) => t.worktreeId === worktree.id && t.connected);
@@ -84,36 +87,19 @@ export async function summon(
       if (prompt.trim()) await send(agent.handle, prompt);
       return `${id}: back to its agent`;
     }
-    await launch(prompt.trim() || `Sigue con ${id}. Lee el tablero de Orca y Linear antes de tocar nada.`, {
-      worktree: worktree.id,
-      mode: choice.mode,
-    });
+    await launch(prompt.trim() || fill(prefs.resumePrompt, id), { worktree: worktree.id, mode: choice.mode });
     return `${id}: new agent in ${worktree.displayName}`;
   }
-  const vault = worktrees.find((w) => w.isMainWorktree && w.path.endsWith("/vault"));
-  if (!vault) throw new Error(`No worktree for ${id}, and the vault main checkout is not in Orca`);
-  await launch(`/start-task ${id}${prompt.trim() ? `\n\n${prompt}` : ""}`, { worktree: vault.id, mode: choice.mode });
-  return `${id}: starting it from the vault`;
-}
-
-export async function lastChoice(worktrees: Worktree[]): Promise<Choice> {
-  const saved = await LocalStorage.getItem<string>("worktree");
-  const worktree =
-    worktrees.find((w) => w.id === saved)?.id ?? worktrees.find((w) => w.isMainWorktree)?.id ?? worktrees[0]?.id;
-  const mode = (await LocalStorage.getItem<string>("mode")) ?? MODES[0].value;
-  return { worktree, mode };
-}
-
-export async function saveChoice({ worktree, mode }: Choice) {
-  await LocalStorage.setItem("worktree", worktree);
-  await LocalStorage.setItem("mode", mode);
-}
-
-export async function launch(prompt: string, { worktree, mode }: Choice) {
-  const dir = mkdtempSync(join(tmpdir(), "orca-summon-"));
-  const file = join(dir, "prompt.txt");
-  writeFileSync(file, prompt);
-  const command = `claude --permission-mode ${mode} "$(cat '${file}')"; rm -rf '${dir}'`;
-  await run("open", ["-a", "Orca"]);
-  await run(ORCA, ["terminal", "create", "--worktree", `id:${worktree}`, "--command", command, "--focus", "--json"]);
+  const fallback = prefs.fallbackWorktree?.trim();
+  const target = fallback ? worktrees.find((w) => w.path === fallback) : undefined;
+  if (!target) {
+    throw new Error(
+      fallback
+        ? `No worktree for ${id}, and the fallback ${fallback} is not an Orca worktree`
+        : `No worktree for ${id}. Set a fallback worktree in the extension preferences`,
+    );
+  }
+  const start = fill(prefs.startPrompt, id);
+  await launch(prompt.trim() ? `${start}\n\n${prompt}` : start, { worktree: target.id, mode: choice.mode });
+  return `${id}: starting it in ${target.displayName}`;
 }
