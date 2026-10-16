@@ -39,6 +39,31 @@
           "required": true
         }
       ]
+    },
+    {
+      "name": "jump",
+      "title": "Jump to Task",
+      "description": "Open the Orca worktree of a Linear issue: focus its live agent, or summon one, or start the task from the vault",
+      "mode": "no-view",
+      "keywords": [
+        "orca",
+        "jump",
+        "linear"
+      ],
+      "arguments": [
+        {
+          "name": "target",
+          "type": "text",
+          "placeholder": "ES-12279",
+          "required": true
+        },
+        {
+          "name": "prompt",
+          "type": "text",
+          "placeholder": "Question (optional)",
+          "required": false
+        }
+      ]
     }
   ],
   "dependencies": {

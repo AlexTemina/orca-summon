@@ -23,7 +23,10 @@ export type Worktree = {
   displayName: string;
   isMainWorktree: boolean;
   isArchived: boolean;
+  linkedLinearIssue: string | null;
 };
+
+export type Terminal = { handle: string; worktreeId: string; connected: boolean; title: string };
 
 export type Choice = { worktree: string; mode: string };
 
@@ -31,6 +34,17 @@ export async function listWorktrees(): Promise<Worktree[]> {
   const { stdout } = await run(ORCA, ["worktree", "list", "--json"]);
   const all: Worktree[] = JSON.parse(stdout).result.worktrees;
   return all.filter((w) => !w.isArchived && !w.path.startsWith("/private/tmp/"));
+}
+
+export async function listTerminals(): Promise<Terminal[]> {
+  const { stdout } = await run(ORCA, ["terminal", "list", "--json"]);
+  const parsed = JSON.parse(stdout).result;
+  return (parsed.terminals ?? parsed) as Terminal[];
+}
+
+export async function switchTo(handle: string) {
+  await run("open", ["-a", "Orca"]);
+  await run(ORCA, ["terminal", "switch", "--terminal", handle, "--json"]);
 }
 
 export async function lastChoice(worktrees: Worktree[]): Promise<Choice> {
