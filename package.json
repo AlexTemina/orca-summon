@@ -45,18 +45,39 @@
           "required": false
         }
       ]
+    },
+    {
+      "name": "slack-pause",
+      "title": "Pause Slack Notifications",
+      "description": "Pause Slack notifications for a number of minutes (Slack's own Do Not Disturb). Hearthian calls it between Slack windows",
+      "mode": "no-view",
+      "arguments": [
+        {
+          "name": "minutes",
+          "type": "text",
+          "placeholder": "Minutes",
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "slack-resume",
+      "title": "Resume Slack Notifications",
+      "description": "End the Slack notification pause. Hearthian calls it when a Slack window opens",
+      "mode": "no-view"
     }
   ],
   "dependencies": {
-    "@raycast/api": "^1.104.20"
+    "@raycast/api": "^1.104.20",
+    "@raycast/utils": "^2.3.3"
   },
   "devDependencies": {
+    "@raycast/eslint-config": "^2.2.0",
     "@types/node": "22.19.17",
     "@types/react": "19.0.10",
-    "typescript": "^5.9.3",
-    "@raycast/eslint-config": "^2.2.0",
     "eslint": "^9.39.0",
-    "prettier": "^3.8.5"
+    "prettier": "^3.8.5",
+    "typescript": "^5.9.3"
   },
   "scripts": {
     "build": "ray build",
